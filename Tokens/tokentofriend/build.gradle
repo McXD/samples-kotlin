@@ -143,24 +143,6 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
-//    node {
-//        name "O=USEast3,L=New York,C=US"
-//        p2pPort 10008
-//        rpcSettings {
-//            address("localhost:10009")
-//            adminAddress("localhost:10049")
-//        }
-//        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
-//    }
-//    node {
-//        name "O=AsiaEast,L=Beijing,C=CN"
-//        p2pPort 10011
-//        rpcSettings {
-//            address("localhost:10012")
-//            adminAddress("localhost:10052")
-//        }
-//        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
-//    }
     node {
         name "O=USWest1,L=San Diego,C=US"
         p2pPort 10014
@@ -173,7 +155,9 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
 
 }
 
-task prepareDockerNodes(type: net.corda.plugins.Dockerform, dependsOn: ['jar']) {
+apply from: './postgres.gradle'
+
+task prepareDockerNodes(type: net.corda.plugins.Dockerform, dependsOn: ['jar', 'generateInitScripts']) {
     // set docker image for each node
     dockerImage = "corda/corda-zulu-java1.8-4.8"
 
@@ -219,6 +203,5 @@ task prepareDockerNodes(type: net.corda.plugins.Dockerform, dependsOn: ['jar']) 
         sshdPort 2224
     }
 
-    // This property needs to be outside the node {...} elements
-    dockerImage = "corda/corda-zulu-java1.8-4.8"
+    dockerConfig = postgres
 }
